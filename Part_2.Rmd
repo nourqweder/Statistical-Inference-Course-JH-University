@@ -1,0 +1,81 @@
+---
+title: 'Part 2:Basic Inferential Data Analysis Instructions'
+author: "Nour Qweder"
+date: "8/13/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(gridExtra)
+library(ggplot2)
+```
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+## 1.1.) Data analysis
+Load the ToothGrowth data and perform some basic exploratory data analyses
+Provide a basic summary of the data.
+
+
+```{r, warning=FALSE}
+set.seed(12345)
+data("ToothGrowth")
+attach(ToothGrowth)
+head(ToothGrowth)
+sapply(ToothGrowth, class)
+summary(ToothGrowth)
+
+
+
+n = dim(ToothGrowth)# 60 3
+sapply(ToothGrowth,function(x) sum(is.na(x))) #see if there are NAN values per column
+str(ToothGrowth)
+
+
+plot(ToothGrowth)
+```
+
+From previous analysis, it can be noticed that *ToothGrowth* dataset with 60 observations and 3 features *len as a number value, supp as a factor and dose as a number value*.
+
+
+
+
+
+## 1.2.) confidence intervals
+Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+
+
+```{r, echo=FALSE}
+## applying t- test
+test<-t.test(len~supp,data=ToothGrowth)
+
+```
+
+From the previous test, it can be noticed that *p_value = 0.6 > 0.5* ; Based on t-test, it can be obtained that supplement seems to have no impact on the growth of tooth 
+
+
+```{r, echo=FALSE}
+d1 <- ggplot(data = ToothGrowth, aes(y = supp, x = len, colour = len)) + geom_point()
+
+d2 <- ggplot(data = ToothGrowth, aes(y = supp, x = len, colour = dose)) + geom_point()
+
+d3 <- ggplot(data = ToothGrowth, aes(y = supp, x = len, colour = supp)) + geom_point()
+
+grid.arrange(d1, d2,d3, nrow = 2, ncol = 2)
+```
+
+## Hypothesis
+Length can be affected by dose
+
+Application methods have no impact on tooth growth.
+$H_{0}$ : Both group have the same mean.
+$H_{A}$ : Means are different.
+
+T-test
+
+```{r}
+ToothGrowth_sub <- subset(ToothGrowth, ToothGrowth$dose %in% c(1.0,0.5))
+t.test(len~dose,data=ToothGrowth_sub)
+```
+
+## 1.3.) conclusions
+From the previous test, it can be noticed that *p_value = 1.268e-07 < 0.05* ; Based on t-test, it can be obtained that does seems to have an impact on the growth of tooth, so $H_{0}$ can not be rejected.
